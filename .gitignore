@@ -38,5 +38,5 @@ __screenshots__/
 # Vite
 *.timestamp-*-*.mjs
 
-#supabase
-supabase.js
+# supabase
+src/lib/supabase.js
