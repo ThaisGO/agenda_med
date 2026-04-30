@@ -3,7 +3,7 @@
     <div class="w-full max-w-md p-8 bg-base-100 rounded-2xl shadow-lg">
       
       <!-- Título -->
-      <h1 class="text-3xl font-bold text-center mb-8 text-zinc-800">Login</h1>
+      <h1 class="text-3xl font-bold text-center mb-8 text-zinc-800">Login1</h1>
 
       <!-- Form -->
       <form @submit.prevent="handleLogin" class="space-y-6">
