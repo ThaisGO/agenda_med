@@ -4,7 +4,7 @@
       Dashboard do Paciente
     </h1>
 
-    <p>Bem-vindo! Aqui você vai marcar consultas 👇</p>
+    <p>Bem-vindo! Aqui você vai marcar consultas aqui 👇</p>
 
     <button class="btn btn-primary mt-4">
       Agendar consulta
