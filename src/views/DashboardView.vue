@@ -7,7 +7,7 @@
     <p>Bem-vindo! Aqui você vai marcar consultas aqui 👇</p>
 
     <button class="btn btn-primary mt-4">
-      Agendar consulta
+      Agendar consulta aqui
     </button>
   </div>
 </template>
