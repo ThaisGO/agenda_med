@@ -39,4 +39,4 @@ __screenshots__/
 *.timestamp-*-*.mjs
 
 # supabase
-src/lib/supabase.js
+src/lib/supabase.ts
