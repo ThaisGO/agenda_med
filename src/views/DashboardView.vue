@@ -5,7 +5,7 @@
     <aside class="w-80 bg-base-100 p-6 shadow-lg">
       <div class="border-b border-base-300 mb-6">
         <p class="font-semibold mb-2 text-sm">
-          Bem vindo: {{ userEmail }}
+          Bem vindo, <span>{{ profile.name }}</span>
         </p>
       </div>
 
@@ -63,7 +63,7 @@
       </div>
 
       <!-- Dados do usuário -->
-      <div>
+      <div class="mt-12">
         <h2 class="font-semibold mb-4">Seus dados</h2>
 
         <p class="mb-6 text-sm text-zinc-500">
@@ -72,33 +72,34 @@
         </p>
 
         <div class="grid grid-cols-2 gap-4">
-          <input v-model="form.name" placeholder="Nome" class="input input-bordered w-full rounded-lg" />
-          <input v-model="form.lastname" placeholder="Sobrenome" class="input input-bordered w-full rounded-lg" />
+          <input v-model="profile.name" placeholder="Nome" class="input input-bordered w-full rounded-lg" />
+          <input v-model="profile.lastname" placeholder="Sobrenome" class="input input-bordered w-full rounded-lg" />
 
-          <input v-model="form.phone" placeholder="Telefone" class="input input-bordered w-full rounded-lg col-span-2" />
-          <input v-model="form.email" placeholder="E-mail" class="input input-bordered w-full rounded-lg col-span-2" />
+          <input v-model="profile.phone" placeholder="Telefone" class="input input-bordered w-full rounded-lg col-span-2" />
+          <input v-model="profile.email" placeholder="E-mail" class="input input-bordered w-full rounded-lg col-span-2" />
         </div>
 
-        <button class="btn bg-indigo-600 text-white border-none hover:bg-indigo-700  font-medium mt-5">
+        <!-- @click="saveProfile" -->
+        <button 
+          class="btn bg-indigo-600 text-white border-none hover:bg-indigo-700  font-medium mt-5">
           Salvar alterações
         </button>
       </div>
-
     </main>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/lib/supabase'
+import type { Profile, Appointment } from '@/types/user'
 
 const router = useRouter()
 
-const userEmail = ref('')
-const appointments = ref([])
+const appointments = ref<Appointment[]>([])
 
-const form = ref({
+const profile = ref<Profile>({
   name: '',
   lastname: '',
   phone: '',
@@ -107,16 +108,41 @@ const form = ref({
 
 // 🔐 pegar usuário logado
 const loadUser = async () => {
-  const { data } = await supabase.auth.getUser()
+  const { data: userData } = await supabase.auth.getUser()
 
-  if (!data.user) {
+  if (!userData.user) {
     router.push('/')
     return
+  } else {
+    const user = userData.user
+    console.log(user);
+    
+    getProfile(user.id, user.email!)
   }
-
-  userEmail.value = data.user.email
-  form.value.email = data.user.email
 }
+
+// 🔥 BUSCAR PROFILE
+const getProfile = async (id: string, email: string) => {
+  const { data: userProfile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', id)
+    .single() as { data: Profile | null }
+
+  if (userProfile) {
+    profile.value = {
+      name: userProfile.name || '',
+      lastname: userProfile.lastname || '',
+      phone: userProfile.phone || '',
+      email: email || ''
+    }
+  } else {
+    console.log("Sem profile nesse id");
+    logout()
+    
+  }
+}
+
 
 // 📅 mock de agendamentos (depois vem do banco)
 const loadAppointments = async () => {
