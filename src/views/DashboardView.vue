@@ -1,8 +1,9 @@
 <template>
-  <div class="min-h-screen bg-base-200 flex">
+  <!-- <div class="min-h-screen bg-base-200 flex"> -->
+  <div class="min-h-screen bg-base-200 flex flex-col md:flex-row">
 
     <!-- SIDEBAR -->
-    <aside class="w-80 bg-base-100 p-6 shadow-lg">
+    <aside class="w-full md:w-80 bg-base-100 p-6 shadow-lg">
       <div class="border-b border-base-300 mb-6">
         <p class="font-semibold mb-2 text-sm">
           Bem vindo, <span>{{ profile.name }}</span>
@@ -11,8 +12,25 @@
 
       <h2 class="font-bold mb-3 text-lg">MENU</h2>
 
-      <ul class="menu bg-base-100 rounded-box flex flex-col gap-3">
-        <li><a class="active text-sm text-zinc-700 hover:bg-indigo-200">Painel principal</a></li>
+      <!-- <ul class="menu bg-base-100 rounded-box flex flex-col gap-3"> -->
+      <ul class="menu bg-base-100 rounded-box flex flex-row md:flex-col gap-3 overflow-x-auto">
+
+        <li>
+          <router-link
+            to="/dashboard"
+            v-slot="{ isActive }"
+          >
+            <a
+              :class="[
+                'text-sm px-3 py-2 rounded-lg',
+                isActive ? 'bg-indigo-600 text-white': 'text-zinc-700 hover:bg-indigo-200'
+              ]"
+            >
+              Painel principal
+            </a>
+          </router-link>
+        </li>
+        
         <li><a class=" text-sm text-zinc-700 hover:bg-indigo-200">Agendamentos</a></li>
         <li><a class=" text-sm text-zinc-700 hover:bg-indigo-200">Detalhes da conta</a></li>
         <li><a class=" text-sm text-zinc-700 hover:bg-indigo-200" @click="logout">Sair</a></li>
@@ -20,7 +38,7 @@
     </aside>
 
     <!-- CONTEÚDO -->
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 md:p-8">
 
       <!-- Título + botão -->
       <div class="flex justify-between items-center mb-8 border-b border-zinc-400 pb-4">

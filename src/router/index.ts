@@ -1,13 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import DashboardView from '@/views/DashboardView.vue'
-import HomeView from '@/views/HomeView.vue'
 import { supabase } from '@/lib/supabase.js'
+// import HomeView from '@/views/HomeView.vue'
+import DashboardView from '@/views/DashboardView.vue'
+import  AccountDetailsView  from '@/views/AccountDetailsView.vue'
+import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', component: HomeView },
+    // { path: '/', component: HomeView },
     { path: '/dashboard', component: DashboardView },
+    { path: '/details', component: AccountDetailsView },
+    { path: '/', component: LoginView }
   ],
 })
 
