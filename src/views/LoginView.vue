@@ -38,7 +38,7 @@
         </div>
 
         <!-- Botão -->
-        <button class="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white border-none">
+        <button @click="handleLogin" class="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white border-none">
           Acessar
         </button>
 
@@ -57,25 +57,20 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/stores/auth'
 
 const email = ref('demo@teste.com')
 const password = ref('123456')
 
 const router = useRouter()
+const auth = useAuthStore()
 
 const handleLogin = async () => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  })
-
-  if (error) {
-    alert('Erro no login: ' + error.message)
-    return
+  try {
+    await auth.login (email.value, password.value)
+    router.push('/app/dashboard')
+  } catch (error) {
+    alert('Erro ao fazer login: ' + error.message)
   }
-
-  // ✅ login OK → redireciona
-  router.push('/dashboard')
 }
 </script>
