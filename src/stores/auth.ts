@@ -41,15 +41,17 @@ export const useAuthStore = defineStore('auth', {
                 .eq('id', this.user.id)
                 .single()
 
-            this.profile = data
-            console.log("profile", this.profile);
+            this.profile = {
+                ...data,
+                email: this.user.email || ''
+            }
+
         },
 
         async logout() {
             await supabase.auth.signOut()
             this.user = null
             this.profile = null
-            // router.push('/')
         }
     }
 })
