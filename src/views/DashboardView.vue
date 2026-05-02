@@ -34,7 +34,9 @@
           </table>
         </div>
 
-        <button class="btn btn-sm bg-indigo-600 text-white border-none hover:bg-indigo-700  font-medium">
+        <button 
+          @click="goToAppointments"
+          class="btn btn-sm bg-indigo-600 text-white border-none hover:bg-indigo-700  font-medium">
           Ver todos
         </button>
       </div>
@@ -48,18 +50,13 @@
           gerenciar seus dados e editar sua senha.
         </p>
 
-        <div class="grid grid-cols-2 gap-4">
-          <input v-model="profile.name" placeholder="Nome" class="input input-bordered w-full rounded-lg" />
-          <input v-model="profile.lastname" placeholder="Sobrenome" class="input input-bordered w-full rounded-lg" />
+        <div v-if="profile" class="grid grid-cols-2 gap-4">
+          <input v-model="profile.name" class="input input-bordered w-full rounded-lg border border-zinc-300 text-zinc-600" disabled />
+          <input v-model="profile.lastname" class="input input-bordered w-full rounded-lg border border-zinc-300 text-zinc-600" disabled />
 
-          <input v-model="profile.phone" placeholder="Telefone" class="input input-bordered w-full rounded-lg col-span-2" />
-          <input v-model="profile.email" placeholder="E-mail" class="input input-bordered w-full rounded-lg col-span-2" />
+          <input v-model="profile.phone" class="input input-bordered w-full rounded-lg col-span-2 border border-zinc-300 text-zinc-600" disabled />
+          <input v-model="profile.email" class="input input-bordered w-full rounded-lg col-span-2 border border-zinc-300 text-zinc-600" disabled/>
         </div>
-
-        <button 
-          class="btn bg-indigo-600 text-white border-none hover:bg-indigo-700  font-medium mt-5">
-          Salvar alterações
-        </button>
       </div>
     </main>
 </template>
@@ -67,56 +64,17 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '@/lib/supabase'
-import type { Profile, Appointment } from '@/types/user'
+
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
+
+import type { Appointment } from '@/types/user'
 
 const router = useRouter()
+const auth = useAuthStore()
+const { profile } = storeToRefs(auth)
 
 const appointments = ref<Appointment[]>([])
-
-const profile = ref<Profile>({
-  name: '',
-  lastname: '',
-  phone: '',
-  email: ''
-})
-
-// 🔐 pegar usuário logado
-const loadUser = async () => {
-  const { data: userData } = await supabase.auth.getUser()
-
-  if (!userData.user) {
-    router.push('/')
-    return
-  } else {
-    const user = userData.user
-    // console.log(user);
-    
-    getProfile(user.id, user.email!)
-  }
-}
-
-// 🔥 BUSCAR PROFILE
-const getProfile = async (id: string, email: string) => {
-  const { data: userProfile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', id)
-    .single() as { data: Profile | null }
-
-  if (userProfile) {
-    profile.value = {
-      name: userProfile.name || '',
-      lastname: userProfile.lastname || '',
-      phone: userProfile.phone || '',
-      email: email || ''
-    }
-  } else {
-    console.log("Sem profile nesse id");
-    logout()
-    
-  }
-}
 
 
 // 📅 mock de agendamentos (depois vem do banco)
@@ -139,14 +97,11 @@ const loadAppointments = async () => {
   ]
 }
 
-// 🚪 logout
-const logout = async () => {
-  await supabase.auth.signOut()
-  router.push('/')
+const goToAppointments = () => {
+  router.push('/app/appointments')
 }
 
-// onMounted(() => {
-//   loadUser()
-//   loadAppointments()
-// })
+onMounted(() => {
+  loadAppointments()
+})
 </script>
