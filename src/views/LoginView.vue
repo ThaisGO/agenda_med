@@ -39,7 +39,8 @@
 
         <!-- Botão -->
         <button @click="handleLogin" class="btn w-full bg-indigo-600 hover:bg-indigo-700 text-white border-none">
-          Acessar
+          <span v-if="loading" class="loading loading-spinner bg-white"></span>
+          <span v-else>Acessar</span>
         </button>
 
         <!-- Esqueci senha -->
@@ -58,12 +59,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
 
 const email = ref('demo@teste.com')
 const password = ref('123456')
 
 const router = useRouter()
 const auth = useAuthStore()
+const { loading } = storeToRefs(auth)
 
 const handleLogin = async () => {
   try {

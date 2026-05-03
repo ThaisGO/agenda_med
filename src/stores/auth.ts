@@ -6,21 +6,27 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         user: null as any,
         profile: null as Profile | null,
+        loading: false
     }),
 
     actions: {
         async login(email: string, password: string) {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            })
+            this.loading = true
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                })
 
-            if (error) throw error
+                if (error) throw error
 
-            this.user = data.user
+                this.user = data.user
 
-            if (this.user) {
-                await this.fetchProfile()
+                if (this.user) {
+                    await this.fetchProfile()
+                }
+            } finally {
+                this.loading = false
             }
         },
 
@@ -35,7 +41,9 @@ export const useAuthStore = defineStore('auth', {
         },
 
         async fetchProfile() {
-            const { data } = await supabase
+            this.loading = true
+            try {
+                const { data } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', this.user.id)
@@ -45,7 +53,9 @@ export const useAuthStore = defineStore('auth', {
                 ...data,
                 email: this.user.email || ''
             }
-
+            } finally {
+                this.loading = false
+            }
         },
 
         async logout() {
